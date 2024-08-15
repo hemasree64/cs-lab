@@ -1,0 +1,37 @@
+# Importing necessary libraries
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+
+# Step i: Load the desired dataset
+iris = load_iris()
+iris_df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+
+# Adding the target column to the DataFrame
+iris_df['target'] = iris.target
+
+# Step ii: Find the statistical description of the dataset
+print("Statistical Description of the Iris dataset:")
+stat_desc = iris_df.describe()
+print(stat_desc)
+
+# Step iii: Select any one attribute and construct the Box plot for it
+selected_attribute = 'sepal length (cm)'
+plt.figure(figsize=(8, 6))
+sns.boxplot(y=iris_df[selected_attribute])
+plt.title(f'Box Plot of {selected_attribute}')
+plt.show()
+
+# Step iv: Compare the statistical description of the selected attribute with the Box plot
+print(f"\nStatistical Description of '{selected_attribute}':")
+print(stat_desc[selected_attribute])
+
+# Step v: Draw the dependency curve of the selected attribute
+# (Here, we will plot the selected attribute against the target variable to show its dependency)
+plt.figure(figsize=(8, 6))
+sns.lineplot(x=iris_df.index, y=iris_df[selected_attribute], hue=iris_df['target'], palette='viridis')
+plt.title(f'Dependency Curve of {selected_attribute}')
+plt.xlabel('Index')
+plt.ylabel(selected_attribute)
+plt.show()
