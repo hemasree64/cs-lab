@@ -1,0 +1,49 @@
+# Importing necessary libraries
+import numpy as np
+import pandas as pd
+
+# Sample 1D Data
+data_1d = pd.Series([10, 20, 30, 40, 50])
+
+# Sample 2D Data
+data_2d = pd.DataFrame({
+    'A': [10, 20, 30, 40, 50],
+    'B': [5, 10, 15, 20, 25]
+})
+
+# Sample n-D Data (3D for this example)
+data_3d = pd.DataFrame({
+    'A': [10, 20, 30, 40, 50],
+    'B': [5, 10, 15, 20, 25],
+    'C': [2, 4, 6, 8, 10]
+})
+
+# Function to perform aggregation on any DataFrame or Series
+def perform_aggregation(data):
+    print("Data:\n", data)
+    
+    print("\nAggregation Results:")
+    print("Count:", data.count())
+    print("First Item:", data.first())
+    print("Last Item:", data.last())
+    print("Mean:", data.mean())
+    print("Median:", data.median())
+    print("Min:", data.min())
+    print("Max:", data.max())
+    print("Standard Deviation (std):", data.std())
+    print("Variance (var):", data.var())
+    print("Mean Absolute Deviation (mad):", data.mad())
+    print("Product of all items (prod):", data.prod())
+    print("Sum of all items (sum):", data.sum())
+
+# Performing aggregation on 1D Data
+print("1D Data Aggregation:\n")
+perform_aggregation(data_1d)
+
+# Performing aggregation on 2D Data (applies to each column)
+print("\n2D Data Aggregation:\n")
+perform_aggregation(data_2d)
+
+# Performing aggregation on n-D Data (applies to each column)
+print("\nn-D Data Aggregation (3D in this case):\n")
+perform_aggregation(data_3d)
