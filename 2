@@ -1,0 +1,27 @@
+# Importing necessary libraries
+import pandas as pd
+from sklearn.datasets import load_iris
+
+# Step i: Load the desired data set
+iris = load_iris()
+iris_df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+
+# Adding the target column to the DataFrame
+iris_df['target'] = iris.target
+
+# Step ii: Print the first 10 records
+print("First 10 records of the Iris dataset:")
+print(iris_df.head(10))
+
+# Step iii: Find the length of the dataset and print the number of rows and columns
+rows, columns = iris_df.shape
+print(f"\nTotal number of rows: {rows}")
+print(f"Total number of columns: {columns}")
+
+# Step iv: Extract the column names from the dataset and print them separately
+print("\nColumn names or data list:")
+print(iris_df.columns.tolist())
+
+# Step v: Find the mean of all the numerical attributes
+print("\nMean of all numerical attributes:")
+print(iris_df.mean())
