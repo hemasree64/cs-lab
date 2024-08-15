@@ -1,0 +1,73 @@
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_iris
+import matplotlib.pyplot as plt
+
+# Load the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+labels = iris.target_names
+
+# Step i: Calculate the between-class variance (Sb)
+def between_class_scatter_matrix(X, y):
+    overall_mean = np.mean(X, axis=0)
+    Sb = np.zeros((X.shape[1], X.shape[1]))
+    
+    for c in np.unique(y):
+        class_mean = np.mean(X[y == c], axis=0)
+        n_c = X[y == c].shape[0]
+        Sb += n_c * np.outer((class_mean - overall_mean), (class_mean - overall_mean))
+        
+    return Sb
+
+Sb = between_class_scatter_matrix(X, y)
+print("Between-Class Scatter Matrix (Sb):\n", Sb)
+
+# Step ii: Calculate the within-class variance (Sw)
+def within_class_scatter_matrix(X, y):
+    Sw = np.zeros((X.shape[1], X.shape[1]))
+    
+    for c in np.unique(y):
+        class_scatter = np.cov(X[y == c], rowvar=False, bias=True)
+        Sw += class_scatter * (X[y == c].shape[0] - 1)
+        
+    return Sw
+
+Sw = within_class_scatter_matrix(X, y)
+print("\nWithin-Class Scatter Matrix (Sw):\n", Sw)
+
+# Step iii: Compute the eigenvectors and the corresponding eigenvalues
+# Solving the generalized eigenvalue problem for the matrix inv(Sw) * Sb
+eigenvalues, eigenvectors = np.linalg.eig(np.linalg.inv(Sw).dot(Sb))
+
+# Step iv: Put the eigenvalues in decreasing order and select k eigenvectors with the largest eigenvalues
+# Sorting eigenvalues and eigenvectors in decreasing order
+sorted_indices = np.argsort(eigenvalues)[::-1]
+sorted_eigenvalues = eigenvalues[sorted_indices]
+sorted_eigenvectors = eigenvectors[:, sorted_indices]
+
+# Printing the eigenvalues and corresponding eigenvectors
+print("\nEigenvalues in decreasing order:\n", sorted_eigenvalues)
+print("\nEigenvectors:\n", sorted_eigenvectors)
+
+# Step v: Create a k dimensional matrix containing the eigenvectors
+# For LDA, typically k is the number of classes minus 1
+k = len(np.unique(y)) - 1
+W = sorted_eigenvectors[:, :k]
+
+print(f"\n{k}-dimensional matrix containing the selected eigenvectors:\n", W)
+
+# Project the data onto the new k-dimensional subspace
+X_lda = X.dot(W)
+
+# Plot the projected data
+plt.figure(figsize=(8, 6))
+for c, label in zip(np.unique(y), labels):
+    plt.scatter(X_lda[y == c, 0], X_lda[y == c, 1], label=label)
+plt.xlabel('LD1')
+plt.ylabel('LD2')
+plt.title('LDA: Linear Discriminant Analysis')
+plt.legend()
+plt.grid(True)
+plt.show()
