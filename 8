@@ -1,0 +1,36 @@
+# Import necessary libraries
+import numpy as np
+import pandas as pd
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+
+# Step 1: Load the data
+# We'll use the Iris dataset as an example
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Step 2: Standardize the features
+scaler = StandardScaler()
+X_standardized = scaler.fit_transform(X)
+
+# Step 3: Perform PCA with n=2 (number of components)
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_standardized)
+
+# Step 4: Plot the data with the new principal components
+plt.figure(figsize=(8, 6))
+for target in np.unique(y):
+    plt.scatter(X_pca[y == target, 0], X_pca[y == target, 1], label=iris.target_names[target])
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.title('PCA of Iris Dataset')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Step 5: Display the variance among the 2 components
+explained_variance = pca.explained_variance_ratio_
+print(f"Explained Variance Ratio of Principal Components:\nPC1: {explained_variance[0]:.4f}, PC2: {explained_variance[1]:.4f}")
