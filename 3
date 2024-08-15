@@ -1,0 +1,46 @@
+# Importing necessary libraries
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from scipy.stats import norm
+
+# Step i: Load the desired dataset
+iris = load_iris()
+iris_df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+
+# Adding the target column to the DataFrame
+iris_df['target'] = iris.target
+
+# Step ii & iii: Count the total number of instances based on the values of the selected attribute
+print("Total number of records based on the values in each attribute:\n")
+for column in iris_df.columns:
+    print(f"Counts for {column}:")
+    print(iris_df[column].value_counts(), "\n")
+
+# Step iv, v & vi: Find the normal distribution, SD, and mean for each attribute
+for column in iris_df.columns[:-1]:  # Exclude 'target' as it is categorical
+    data = iris_df[column]
+    
+    # Plotting the Normal Distribution
+    mean = data.mean()
+    std_dev = data.std()
+    x = np.linspace(mean - 3*std_dev, mean + 3*std_dev, 100)
+    plt.plot(x, norm.pdf(x, mean, std_dev))
+    plt.title(f'Normal Distribution of {column}')
+    plt.xlabel(column)
+    plt.ylabel('Density')
+    plt.show()
+    
+    # Printing the mean and standard deviation
+    print(f"Mean of {column}: {mean}")
+    print(f"Standard Deviation of {column}: {std_dev}\n")
+
+# Step vii: Print the distribution of the attributes using Histogram
+for column in iris_df.columns[:-1]:  # Exclude 'target' as it is categorical
+    plt.hist(iris_df[column], bins=20, color='skyblue', edgecolor='black')
+    plt.title(f'Histogram of {column}')
+    plt.xlabel(column)
+    plt.ylabel('Frequency')
+    plt.show()
