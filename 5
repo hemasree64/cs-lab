@@ -1,0 +1,62 @@
+# Importing necessary libraries
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+from scipy.optimize import minimize
+
+# Step i: Generate 100 random values between 10 to 30 and refer them as X
+np.random.seed(42)  # For reproducibility
+X = np.random.uniform(10, 30, 100)
+
+# Step ii: Find the Y using the function y = 10 + 4x + e
+# Assuming e (error term) is normally distributed with mean 0 and standard deviation 2
+e = np.random.normal(0, 2, 100)
+Y = 10 + 4 * X + e
+
+# Step iii: Put the X and Y values in a dataframe
+data = pd.DataFrame({'X': X, 'Y': Y})
+
+# Step iv: Plot the generated values using regplot() function
+sns.regplot(x='X', y='Y', data=data, ci=None, line_kws={'color':'red'})
+plt.title('Generated Data with Regression Line')
+plt.show()
+
+# Step v: Find the OLS regression results using OLS model
+X_ols = sm.add_constant(X)  # Add a constant term for the intercept
+ols_model = sm.OLS(Y, X_ols)
+ols_results = ols_model.fit()
+
+print("OLS Regression Results:\n", ols_results.summary())
+
+# Step vi: Calculate the Standard Deviation (SD) for the residuals
+residuals = ols_results.resid
+sd_residuals = np.std(residuals)
+print(f"Standard Deviation of Residuals: {sd_residuals}\n")
+
+# Step vii: Construct the MLE model using L-BFGS-B Memory optimization Algorithm
+
+# Define the likelihood function
+def negative_log_likelihood(params):
+    intercept, slope, sd = params[0], params[1], params[2]
+    predicted = intercept + slope * X
+    residuals = Y - predicted
+    likelihood = -np.sum(np.log(norm.pdf(residuals, 0, sd)))
+    return likelihood
+
+# Initial guesses for the parameters
+initial_params = [0, 0, 1]
+
+# Using L-BFGS-B algorithm to minimize the negative log-likelihood
+mle_results = minimize(negative_log_likelihood, initial_params, method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-6, None)])
+
+# Extracting MLE parameters
+mle_intercept, mle_slope, mle_sd = mle_results.x
+print(f"MLE Parameters: Intercept = {mle_intercept}, Slope = {mle_slope}, Standard Deviation = {mle_sd}\n")
+
+# Step viii: Compare MLE parameters with OLS Parameters
+print(f"Comparison of MLE and OLS Parameters:\n")
+print(f"OLS Intercept: {ols_results.params[0]}, MLE Intercept: {mle_intercept}")
+print(f"OLS Slope: {ols_results.params[1]}, MLE Slope: {mle_slope}")
+print(f"OLS Residual Standard Deviation: {sd_residuals}, MLE Estimated Standard Deviation: {mle_sd}")
