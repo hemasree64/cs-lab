@@ -1,0 +1,83 @@
+import numpy as np
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.metrics import silhouette_score
+
+# Step 1: Create/Load the data
+# For this example, let's use the Iris dataset
+iris = load_iris()
+X = iris.data
+
+# Step 2: Standardize the features
+scaler = StandardScaler()
+X_standardized = scaler.fit_transform(X)
+
+# Step 3: Plot the standardized features (optional, we will plot only the first two features for simplicity)
+plt.figure(figsize=(8, 6))
+plt.scatter(X_standardized[:, 0], X_standardized[:, 1], c='gray', marker='o')
+plt.xlabel('Standardized Feature 1')
+plt.ylabel('Standardized Feature 2')
+plt.title('Standardized Features')
+plt.grid(True)
+plt.show()
+
+# Step 4: Apply K-Means clustering with n=3
+kmeans = KMeans(n_clusters=3, random_state=42)
+y_kmeans = kmeans.fit_predict(X_standardized)
+
+# Step 5: Plot the clusters with their center points
+plt.figure(figsize=(8, 6))
+plt.scatter(X_standardized[y_kmeans == 0, 0], X_standardized[y_kmeans == 0, 1], s=100, c='red', label='Cluster 1')
+plt.scatter(X_standardized[y_kmeans == 1, 0], X_standardized[y_kmeans == 1, 1], s=100, c='green', label='Cluster 2')
+plt.scatter(X_standardized[y_kmeans == 2, 0], X_standardized[y_kmeans == 2, 1], s=100, c='blue', label='Cluster 3')
+
+# Plotting the centroids
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=300, c='yellow', label='Centroids')
+plt.xlabel('Standardized Feature 1')
+plt.ylabel('Standardized Feature 2')
+plt.title('Clusters with Centroids')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Step 6: Find the value of K for the selected data set using the Elbow method
+wcss = []  # Within-cluster sum of squares
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters=i, random_state=42)
+    kmeans.fit(X_standardized)
+    wcss.append(kmeans.inertia_)
+
+plt.figure(figsize=(8, 6))
+plt.plot(range(1, 11), wcss, marker='o')
+plt.title('Elbow Method for Optimal K')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS (Within-cluster sum of squares)')
+plt.grid(True)
+plt.show()
+
+# Step 7: Apply K-Means clustering with the recommended Elbow value as k (let's assume k=3 from the Elbow method)
+optimal_k = 3
+kmeans_optimal = KMeans(n_clusters=optimal_k, random_state=42)
+y_kmeans_optimal = kmeans_optimal.fit_predict(X_standardized)
+
+# Step 8: Plot the clusters with their center points using the optimal k
+plt.figure(figsize=(8, 6))
+plt.scatter(X_standardized[y_kmeans_optimal == 0, 0], X_standardized[y_kmeans_optimal == 0, 1], s=100, c='red', label='Cluster 1')
+plt.scatter(X_standardized[y_kmeans_optimal == 1, 0], X_standardized[y_kmeans_optimal == 1, 1], s=100, c='green', label='Cluster 2')
+plt.scatter(X_standardized[y_kmeans_optimal == 2, 0], X_standardized[y_kmeans_optimal == 2, 1], s=100, c='blue', label='Cluster 3')
+
+# Plotting the centroids
+plt.scatter(kmeans_optimal.cluster_centers_[:, 0], kmeans_optimal.cluster_centers_[:, 1], s=300, c='yellow', label='Centroids')
+plt.xlabel('Standardized Feature 1')
+plt.ylabel('Standardized Feature 2')
+plt.title('Optimal Clusters with Centroids')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Optional: Calculate the silhouette score for the optimal clustering
+silhouette_avg = silhouette_score(X_standardized, y_kmeans_optimal)
+print(f'Silhouette Score for k={optimal_k}: {silhouette_avg:.4f}')
