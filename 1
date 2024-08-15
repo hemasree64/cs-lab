@@ -1,0 +1,40 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+# i. Load the data
+iris = sns.load_dataset('iris')
+
+# ii. Select an attribute from the dataset and print the first five records
+# You can change 'sepal_length' to any other attribute such as 'sepal_width', 'petal_length', or 'petal_width'
+attribute = 'sepal_length'
+print(f"First five records of the selected attribute '{attribute}':")
+print(iris[attribute].head())
+
+# iii. Plot the Histogram and Kernel Density Estimation of the selected attribute
+plt.figure(figsize=(12, 6))
+
+plt.subplot(1, 2, 1)
+sns.histplot(iris[attribute], kde=False, color='blue')
+plt.title(f'Histogram of {attribute}')
+
+plt.subplot(1, 2, 2)
+sns.kdeplot(iris[attribute], color='red')
+plt.title(f'KDE of {attribute}')
+
+plt.show()
+
+# iv. Print the probability plot for the selected attribute
+plt.figure(figsize=(6, 6))
+stats.probplot(iris[attribute], dist="norm", plot=plt)
+plt.title(f'Probability Plot of {attribute}')
+plt.show()
+
+# v. Find the skewness for the selected attribute
+skewness = iris[attribute].skew()
+print(f"Skewness of {attribute}: {skewness}")
+
+# vi. Find the kurtosis for the selected attribute
+kurtosis = iris[attribute].kurtosis()
+print(f"Kurtosis of {attribute}: {kurtosis}")
