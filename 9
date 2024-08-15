@@ -1,0 +1,28 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Step 1: Prepare/download the data
+# For this example, let's create a sample dataset
+data = {
+    'Category': ['A', 'B', 'C', 'D', 'E'],
+    'Values': [23, 45, 56, 78, 89]
+}
+
+df = pd.DataFrame(data)
+
+# Step 2: Select the attributes for constructing the Horizontal Bar chart
+categories = df['Category']
+values = df['Values']
+
+# Step 3: Plot the Bar and H-bar chart for the points/data among the selected attributes
+plt.figure(figsize=(10, 6))
+
+# Plotting the Horizontal Bar Chart (H-Plot)
+plt.barh(categories, values, color='skyblue')
+plt.xlabel('Values')
+plt.ylabel('Categories')
+plt.title('H-Plot (Horizontal Bar Chart)')
+plt.grid(True)
+
+# Display the plot
+plt.show()
